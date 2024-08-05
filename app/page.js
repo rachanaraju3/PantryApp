@@ -12,6 +12,7 @@ export default function Home() {
   const [open, setOpen] = useState(false)
   const [itemName, setItemName] = useState('')
   const [searched, setSearched] = useState('')
+  const [filteredInventory, setFilteredInventory] = useState([])
 
   const updateInventory = async () => {
     const snapshot = query(collection(firestore, 'inventory'))
@@ -24,6 +25,7 @@ export default function Home() {
       })
     })
     setInventory(inventoryList)
+    setFilteredInventory(inventoryList)
     console.log(inventoryList)
   }
 
@@ -62,15 +64,14 @@ export default function Home() {
     updateInventory()
   }, [])
 
-  const handleSearch=((searched)=>{
-    console.log(searched)
-    if (searched === "") return updateInventory() // makes sure to show all items when user deletes characters from search
-    // will update items that match as you add more characters doesn't work for deleting characters yet
-    const filtered = inventory.filter((item) => item.name.toLowerCase().includes(searched.toLowerCase()))
-    console.log("made it here")
-    console.log(filtered)
-    setInventory(filtered)
-  })
+  useEffect(() => {
+    if (searched === ""){
+      setFilteredInventory(inventory)
+    }else{
+      setFilteredInventory(inventory.filter((item) => item.name.toLowerCase().includes(searched.toLowerCase())))
+    }
+  }, [searched, inventory])
+
 
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
@@ -107,7 +108,7 @@ export default function Home() {
               </InputAdornment>
           )}} value={searched} onChange={(e) => 
             {setSearched(e.target.value)
-            handleSearch(e.target.value)} }/>
+            } }/>
       </Box>
       <Box border={'1px solid #333'}>
         <Box width='800px' height='40px' bgcolor='#ADD8E6'>
@@ -115,7 +116,7 @@ export default function Home() {
         </Box>
       <Stack width='800px' height='180px' spacing={2} overflow='auto' >
         {
-          inventory.map(({name, quantity}) => (
+          filteredInventory.map(({name, quantity}) => (
             <Box key={name} width='100%' height='30px' display='flex' alignItems='center' justifyContent='space-between' bgcolor='#F0FFFF' padding={3}>
               <Typography variant='h6' color='#0096FF' textAlign='center'>{name.charAt(0).toUpperCase() + name.slice(1)}</Typography>
               <Typography variant='h6' color='#0096FF' textAlign='center'>{quantity}</Typography>
