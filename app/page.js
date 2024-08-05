@@ -11,6 +11,7 @@ export default function Home() {
   const [inventory, setInventory] = useState([])
   const [open, setOpen] = useState(false)
   const [itemName, setItemName] = useState('')
+  const [searched, setSearched] = useState('')
 
   const updateInventory = async () => {
     const snapshot = query(collection(firestore, 'inventory'))
@@ -56,9 +57,20 @@ export default function Home() {
     await updateInventory()
   }
 
+
   useEffect(() => {
     updateInventory()
   }, [])
+
+  const handleSearch=((searched)=>{
+    console.log(searched)
+    if (searched === "") return updateInventory() // makes sure to show all items when user deletes characters from search
+    // will update items that match as you add more characters doesn't work for deleting characters yet
+    const filtered = inventory.filter((item) => item.name.toLowerCase().includes(searched.toLowerCase()))
+    console.log("made it here")
+    console.log(filtered)
+    setInventory(filtered)
+  })
 
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
@@ -72,13 +84,10 @@ export default function Home() {
         <Typography variant='h1' position='absolute' left='50%' top='50%' sx={{transform:"translate(-50%,-50%)"}} bgcolor='#C19A6B'>PantryPal</Typography>
         <Typography variant='h6' position='absolute' left='50%' top='50%' sx={{transform:"translate(-50%,300%)"}} bgcolor='#C19A6B'>Manage your kitchen inventory with this tracker!</Typography>
       </Box>
-      {/* <Box display='flex' justifyContent='center' alignItems='center' >
-        <Typography>Manage your pantry inventory with PantryPal!</Typography>
-      </Box> */}
       <Box display='flex' flexDirection='column'  alignItems='center' gap={2} margin='auto'>
       <Box display='flex' flexDirection='row' position='relative' >
         <Modal open={open} onClose={handleClose}>
-          <Box position='absolute' top='50%' left='50%' width={400} bgcolor='white' border='2px solid #000' boxShadow={24} p={4} display='flex' flexDirection='row' gap={3} sx={{transform:"translate(-50%,-50%)"}}>
+          <Box position='absolute' top='50%' left='50%' width={400} bgcolor='white' border='2px solid #000' p={4} display='flex' flexDirection='row' gap={3} sx={{transform:"translate(-50%,-50%)"}}>
             <Typography variant='h6'>Add Item</Typography>
             <Stack width='100%' direction='row' spacing={2}>
               <TextField variant='outlined' fullWidth value={itemName} onChange={(e)=>{setItemName(e.target.value)}}/>
@@ -92,11 +101,13 @@ export default function Home() {
       <Button sx={{transform:"translate(50%,0%)"}} variant='contained' onClick={()=>{
         handleOpen()
       }}>Add New Item</Button>
-      <TextField position='absolute' top='50%' left='50%' width={400} bgcolor='white' border='2px solid #000' boxShadow={24} p={4} display='flex' flexDirection='row' gap={3} sx={{transform:"translate(100%,0%)"}} id="input-with-icon-adornment" label="Search Inventory" variant="standard" InputProps={{endAdornment:(
+      <TextField position='absolute' top='50%' left='50%' width={400} bgcolor='white' border='2px solid #000'  p={4} display='flex' flexDirection='row' gap={3} sx={{transform:"translate(100%,0%)"}} id="input-with-icon-adornment" label="Search Inventory" variant="standard" InputProps={{endAdornment:(
               <InputAdornment position="end">
                 <SearchIcon />
               </InputAdornment>
-          )}}/>
+          )}} value={searched} onChange={(e) => 
+            {setSearched(e.target.value)
+            handleSearch(e.target.value)} }/>
       </Box>
       <Box border={'1px solid #333'}>
         <Box width='800px' height='40px' bgcolor='#ADD8E6'>
