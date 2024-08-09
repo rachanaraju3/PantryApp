@@ -111,16 +111,16 @@ export default function Home() {
             } }/>
       </Box>
       <Box border={'1px solid #333'}>
-        <Box width='800px' height='40px' bgcolor='#ADD8E6'>
+        <Box width='70vw' height='40px' bgcolor='#ADD8E6'>
           <Typography variant='h4' color='#0096FF' display='flex' alignItems='center' justifyContent='center'>Items</Typography>
         </Box>
-      <Stack width='800px' height='180px' spacing={2} overflow='auto' >
+      <Stack width='70vw' height='180px' spacing={2} overflow='auto' >
         {
           filteredInventory.map(({name, quantity}) => (
             <Box key={name} width='100%' height='30px' display='flex' alignItems='center' justifyContent='space-between' bgcolor='#F0FFFF' padding={3}>
-              <Typography variant='h6' color='#0096FF' textAlign='center'>{name.charAt(0).toUpperCase() + name.slice(1)}</Typography>
+              <Typography variant='h6' width='150px' color='#0096FF' textAlign='left'>{name.charAt(0).toUpperCase() + name.slice(1)}</Typography>
               <Typography variant='h6' color='#0096FF' textAlign='center'>{quantity}</Typography>
-              <Stack direction='row' spacing={2}>
+              <Stack direction='row' spacing={2} justifyContent={'flex-end'}>
                 <Button size='small' variant='contained' onClick={() => addItem(name)}>Add</Button>
                 <Button size='small' variant='contained' onClick={() => removeItem(name)}>Remove</Button>
               </Stack>
